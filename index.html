@@ -29,11 +29,12 @@ th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--lin
 th { font-weight: 600; color: var(--muted); white-space: nowrap; }
 tr:last-child td { border-bottom: 0; }
 td.t { white-space: nowrap; font-variant-numeric: tabular-nums; }
-td.notes { color: var(--muted); min-width: 220px; }
+td.notes { color: var(--muted); min-width: 220px; overflow-wrap: anywhere; }
+.host { color: var(--muted); font-size: 12px; margin: 2px 0 0 24px; }
 .fav { vertical-align: -3px; margin-right: 8px; border-radius: 3px; }
 .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
 #dark .dot { background: var(--dark); } #back .dot { background: var(--up); }
-@media (max-width: 600px) { th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3) { display: none; } table, thead, tbody { display: block; } tr { display: grid; grid-template-columns: 1fr auto auto; border-bottom: 1px solid var(--line); } th, td { padding: 8px; border: 0; } th:last-child { display: none; } td.notes { grid-column: 1 / -1; padding-top: 0; } .back th:nth-child(4), .back td:nth-child(4) { display: none; } }
+@media (max-width: 600px) { th:nth-child(2), td:nth-child(2) { display: none; } table, thead, tbody { display: block; } tr { display: grid; grid-template-columns: 1fr auto auto; border-bottom: 1px solid var(--line); } th, td { padding: 8px; border: 0; } th:last-child { display: none; } td.notes { grid-column: 1 / -1; padding-top: 0; } .back th:nth-child(3), .back td:nth-child(3) { display: none; } }
 .updated { margin: 32px 0 -24px; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
 footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 </style>
@@ -51,10 +52,10 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <p class="updated" id="updated"></p>
 
 <h2 id="dark"><span class="dot"></span>Still dark <span class="n" id="dark-n"></span></h2>
-<div class="wrap"><table><thead><tr><th>Site</th><th>Country</th><th>Type</th><th>Reported dark</th><th>Notes</th></tr></thead><tbody id="dark-rows"></tbody></table></div>
+<div class="wrap"><table><thead><tr><th>Site</th><th>Type</th><th>Reported dark</th><th>Notes</th></tr></thead><tbody id="dark-rows"></tbody></table></div>
 
 <h2 id="back"><span class="dot"></span>Back up <span class="n" id="back-n"></span></h2>
-<div class="wrap"><table class="back"><thead><tr><th>Site</th><th>Country</th><th>Type</th><th>Reported dark</th><th>Back up</th><th>Notes</th></tr></thead><tbody id="back-rows"></tbody></table></div>
+<div class="wrap"><table class="back"><thead><tr><th>Site</th><th>Type</th><th>Reported dark</th><th>Back up</th><th>Notes</th></tr></thead><tbody id="back-rows"></tbody></table></div>
 
 <footer>
 <p>All times are UTC. "Reported dark" is the time of the first public report, not the moment the site went offline. Each date links to its source. Aggregator reports are not confirmed at the original source.</p>
@@ -70,7 +71,7 @@ const fmt = iso => new Date(iso).toLocaleString('en-GB', {timeZone:'UTC', day:'n
 const newest = k => (a, b) => b[k].localeCompare(a[k]) || a.name.localeCompare(b.name);
 // Google's favicon cache still has icons for sites that are down.
 const icon = u => `<img class="fav" src="https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(new URL(u).hostname)}" width="16" height="16" alt="" loading="lazy">`;
-const row = (s, back) => `<tr><td>${icon(s.url)}<a href="${esc(s.url)}">${esc(s.name)}</a></td><td>${esc(s.country)}</td><td>${esc(s.type)}</td>` +
+const row = (s, back) => `<tr><td>${icon(s.url)}<a href="${esc(s.url)}">${esc(s.name)}</a><div class="host">${esc(new URL(s.url).hostname.replace(/^www\./, ''))}</div></td><td>${esc(s.type)}</td>` +
   `<td class="t"><a href="${esc(s.source)}">${fmt(s.dark_since)}</a></td>` + (back ? `<td class="t">${fmt(s.back_up)}</td>` : '') +
   `<td class="notes">${esc(s.notes)}</td></tr>`;
 // Pages sets Last-Modified to the deploy time, and a deploy is a data change.
