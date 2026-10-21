@@ -2,7 +2,7 @@
 
 A list of sites that went offline because of the October 2026 PHP remote code execution flaws (CVE-2026-109618 and CVE-2026-109619), and when they came back.
 
-Live page: https://allixsenos.github.io/phpocalypse/
+Live page: https://allixsenos.github.io/phpocalypse-tracker/
 
 ## Data
 
@@ -21,6 +21,6 @@ All data is in [`sites.csv`](sites.csv). Times are UTC.
 
 ## Report a site
 
-Open an [issue](https://github.com/allixsenos/phpocalypse/issues/new/choose). Give the site, a link that shows it went dark or came back, and the time if you know it. Each report is checked before it goes on the list.
+Open an [issue](https://github.com/allixsenos/phpocalypse-tracker/issues/new/choose). Give the site, a link that shows it went dark or came back, and the time if you know it. Each report is checked before it goes on the list.
 
 This repository does not accept pull requests. Pull requests are closed without review.

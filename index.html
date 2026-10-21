@@ -16,7 +16,9 @@ h2 .n { color: var(--muted); font-weight: 400; }
 a { color: var(--red); }
 td a:first-child { color: var(--fg); text-decoration-color: var(--red); }
 th { border-bottom-color: var(--red) !important; }
-.hero { display:block; width:100%; height:auto; border-radius:8px; border:1px solid var(--line); margin: 0 0 24px; box-shadow: 0 0 48px rgba(255,59,47,.25); }
+header { display:flex; align-items:center; gap:24px; margin-bottom:24px; }
+.hero { flex: 0 0 auto; width: 220px; height: auto; filter: drop-shadow(0 0 28px rgba(255,59,47,.55)); }
+@media (max-width: 600px) { header { flex-direction: column-reverse; align-items: flex-start; } .hero { width: 180px; align-self: center; } }
 .lede { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
 .wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
@@ -33,10 +35,9 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 </head>
 <body>
 <main>
-<h1>PHPocalypse Tracker</h1>
-<p class="lede">Sites that went offline because of the October 2026 PHP remote code execution flaws, and when they came back.</p>
-
-<img class="hero" src="elephpant.jpg" width="960" height="540" alt="Cartoon: a blue PHP elephant on a stage, its hair on fire and its face shocked, while a crowd of photographers points cameras at it.">
+<header><div><h1>PHPocalypse Tracker</h1>
+<p class="lede">Sites that went offline because of the October 2026 PHP remote code execution flaws, and when they came back.</p></div>
+<img class="hero" src="elephpant.png" width="434" height="426" alt="Cartoon: a panicked blue PHP elephant with its hair on fire."></header>
 
 <p>On 20 October 2026 the PHP project announced fixes for two critical remote code execution flaws, CVE-2026-109618 and CVE-2026-109619, for release at 14:00 UTC on 21 October. The embargo leaked a day early and exploit claims spread on social media. A PHP release manager <a href="https://phpc.social/@joepferguson/117476265521630745">said</a> that changing PHP settings will not stop the attacks. Cloudflare <a href="https://x.com/dok2001/status/2112811965735202970">reported early attacks</a> and deployed stopgap firewall rules.</p>
 <p>Many operators did not wait for the patch. They took their PHP services offline. This page lists those sites, when a public source first reported them dark, and when they came back.</p>
@@ -50,7 +51,7 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 
 <footer>
 <p>All times are UTC. "Reported dark" is the time of the first public report, not the moment the site went offline. Each date links to its source. Aggregator reports are not confirmed at the original source.</p>
-<p>Know a site that should be on this list, or one that is back? <a href="https://github.com/allixsenos/phpocalypse/issues/new/choose">Open an issue</a>. The raw data is in <a href="sites.csv">sites.csv</a>.</p>
+<p>Know a site that should be on this list, or one that is back? <a href="https://github.com/allixsenos/phpocalypse-tracker/issues/new/choose">Open an issue</a>. The raw data is in <a href="sites.csv">sites.csv</a>.</p>
 </footer>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
