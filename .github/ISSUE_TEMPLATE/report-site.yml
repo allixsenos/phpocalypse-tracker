@@ -1,0 +1,35 @@
+name: Report a site
+description: A site that went dark because of the PHP flaws, or one that is back up.
+title: "[site] "
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What happened?
+      options:
+        - The site went dark
+        - The site is back up
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Site URL
+      placeholder: https://example.org
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: A link that shows the site went dark or came back, for example a status page, an announcement or a news report.
+    validations:
+      required: true
+  - type: input
+    id: time
+    attributes:
+      label: Time (UTC), if known
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes

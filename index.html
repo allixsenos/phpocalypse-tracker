@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHPocalypse Tracker</title>
+<meta name="description" content="Sites that went offline because of the October 2026 PHP remote code execution flaws, and when they came back.">
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1c1a; --muted:#6b675f; --line:#e3dfd6; --dark:#c0392b; --up:#2e7d4f; --card:#fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#141413; --fg:#ecebe6; --muted:#9c978c; --line:#2d2c29; --dark:#ef6b5c; --up:#5cc98a; --card:#1c1b19; } }
+:root[data-theme="dark"] { --bg:#141413; --fg:#ecebe6; --muted:#9c978c; --line:#2d2c29; --dark:#ef6b5c; --up:#5cc98a; --card:#1c1b19; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: clamp(28px, 6vw, 44px); line-height:1.1; margin: 0 0 8px; }
+h2 { margin: 40px 0 8px; font-size: 22px; }
+h2 .n { color: var(--muted); font-weight: 400; }
+a { color: inherit; }
+.lede { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
+.wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.t { white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.notes { color: var(--muted); min-width: 220px; }
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+#dark .dot { background: var(--dark); } #back .dot { background: var(--up); }
+@media (max-width: 600px) { th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3) { display: none; } table, thead, tbody { display: block; } tr { display: grid; grid-template-columns: 1fr auto auto; border-bottom: 1px solid var(--line); } th, td { padding: 8px; border: 0; } th:last-child { display: none; } td.notes { grid-column: 1 / -1; padding-top: 0; } .back th:nth-child(4), .back td:nth-child(4) { display: none; } }
+footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+<h1>PHPocalypse Tracker</h1>
+<p class="lede">Sites that went offline because of the October 2026 PHP remote code execution flaws, and when they came back.</p>
+
+<p>On 20 October 2026 the PHP project announced fixes for two critical remote code execution flaws, CVE-2026-109618 and CVE-2026-109619, for release at 14:00 UTC on 21 October. The embargo leaked a day early and exploit claims spread on social media. A PHP release manager <a href="https://phpc.social/@joepferguson/117476265521630745">said</a> that changing PHP settings will not stop the attacks. Cloudflare <a href="https://x.com/dok2001/status/2112811965735202970">reported early attacks</a> and deployed stopgap firewall rules.</p>
+<p>Many operators did not wait for the patch. They took their PHP services offline. This page lists those sites, when a public source first reported them dark, and when they came back.</p>
+<p>Background: <a href="https://chaosguru.substack.com/p/the-phpocalypse-is-the-second-biggest">The PHPocalypse is the second biggest story today</a>.</p>
+
+<h2 id="dark"><span class="dot"></span>Still dark <span class="n" id="dark-n"></span></h2>
+<div class="wrap"><table><thead><tr><th>Site</th><th>Country</th><th>Type</th><th>Reported dark</th><th>Notes</th></tr></thead><tbody id="dark-rows"></tbody></table></div>
+
+<h2 id="back"><span class="dot"></span>Back up <span class="n" id="back-n"></span></h2>
+<div class="wrap"><table class="back"><thead><tr><th>Site</th><th>Country</th><th>Type</th><th>Reported dark</th><th>Back up</th><th>Notes</th></tr></thead><tbody id="back-rows"></tbody></table></div>
+
+<footer>
+<p>All times are UTC. "Reported dark" is the time of the first public report, not the moment the site went offline. Each date links to its source. Aggregator reports are not confirmed at the original source.</p>
+<p>Know a site that should be on this list, or one that is back? <a href="https://github.com/allixsenos/phpocalypse/issues/new/choose">Open an issue</a>. The raw data is in <a href="sites.csv">sites.csv</a>.</p>
+</footer>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = iso => new Date(iso).toLocaleString('en-GB', {timeZone:'UTC', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) + ' UTC';
+// Newest first; ISO UTC strings sort as text.
+const newest = k => (a, b) => b[k].localeCompare(a[k]) || a.name.localeCompare(b.name);
+const row = (s, back) => `<tr><td><a href="${esc(s.url)}">${esc(s.name)}</a></td><td>${esc(s.country)}</td><td>${esc(s.type)}</td>` +
+  `<td class="t"><a href="${esc(s.source)}">${fmt(s.dark_since)}</a></td>` + (back ? `<td class="t">${fmt(s.back_up)}</td>` : '') +
+  `<td class="notes">${esc(s.notes)}</td></tr>`;
+Papa.parse('sites.csv?' + Date.now(), { download: true, header: true, skipEmptyLines: true, complete: ({data}) => {
+  const dark = data.filter(s => !s.back_up).sort(newest('dark_since'));
+  const back = data.filter(s => s.back_up).sort(newest('back_up'));
+  document.getElementById('dark-rows').innerHTML = dark.map(s => row(s, false)).join('');
+  document.getElementById('back-rows').innerHTML = back.map(s => row(s, true)).join('');
+  document.getElementById('dark-n').textContent = `(${dark.length})`;
+  document.getElementById('back-n').textContent = `(${back.length})`;
+}});
+</script>
+</body>
+</html>

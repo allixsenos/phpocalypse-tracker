@@ -1,0 +1,17 @@
+name,url,country,type,dark_since,back_up,source,notes
+NotuBiz council portals,https://notubiz.nl,NL,platform,2026-10-21T09:57Z,,https://x.com/IntCyberDigest/status/2112845843938054610,"Council information sites for 100+ Dutch municipalities, including Den Bosch, Breda and Eindhoven. Portals sit behind a bot check, so the tracker cannot confirm their state."
+explain xkcd,https://explainxkcd.com,,site,2026-10-21T09:57Z,,https://x.com/IntCyberDigest/status/2112845843938054610,Returns HTTP 503.
+Star Citizen Wiki,https://starcitizen.tools,,site,2026-10-21T09:57Z,,https://x.com/IntCyberDigest/status/2112845843938054610,Returns HTTP 503.
+Tweede Kamer (Dutch parliament),https://www.tweedekamer.nl,NL,government,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,Connection times out.
+NCSC (Dutch national cyber security centre),https://www.ncsc.nl,NL,government,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,"Shows ""Onze website is tijdelijk niet beschikbaar"" (our website is temporarily unavailable)."
+Autoriteit Persoonsgegevens (Dutch data protection authority),https://autoriteitpersoonsgegevens.nl,NL,government,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,Connection refused.
+Valtori (Finnish central government web services),https://valtori.fi,FI,government,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,"Valtori is shutting down public-facing central government web services as a precaution. It says this is not the result of an attack."
+National Land Survey of Finland,https://www.maanmittauslaitos.fi,FI,government,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,Returns HTTP 503.
+University of Vienna,https://www.univie.ac.at,AT,university,2026-10-21T11:09Z,2026-10-21T11:58Z,https://x.com/IntCyberDigest/status/2112863746049687883,"Reported: websites, webmail and Moodle switched off. Home page first seen up by this tracker at 11:58 UTC. Webmail and Moodle not checked."
+University of Freiburg,https://www.uni-freiburg.de,DE,university,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,The home page shows a computing centre notice about the PHP vulnerabilities.
+Haaga-Helia University of Applied Sciences,https://www.haaga-helia.fi,FI,university,2026-10-21T11:09Z,2026-10-21T11:58Z,https://x.com/IntCyberDigest/status/2112863746049687883,First seen up by this tracker at 11:58 UTC.
+Tweakers,https://tweakers.net,NL,site,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,Blocks automated checks. State not confirmed.
+Fur Affinity,https://www.furaffinity.net,,site,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,"Shows ""FA is temporarily offline!"""
+Pinboard,https://pinboard.in,,site,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,Returns HTTP 503.
+Miraheze (all wikis),https://meta.miraheze.org,,platform,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,Returns HTTP 503.
+4chan,https://boards.4chan.org,,site,2026-10-21T11:09Z,,https://x.com/IntCyberDigest/status/2112863746049687883,Read-only mode. Posting is off.
