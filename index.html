@@ -6,16 +6,17 @@
 <title>PHPocalypse Tracker</title>
 <meta name="description" content="Sites that went offline because of the October 2026 PHP remote code execution flaws, and when they came back.">
 <style>
-:root { --bg:#fbfaf7; --fg:#1d1c1a; --muted:#6b675f; --line:#e3dfd6; --dark:#c0392b; --up:#2e7d4f; --card:#fff; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#141413; --fg:#ecebe6; --muted:#9c978c; --line:#2d2c29; --dark:#ef6b5c; --up:#5cc98a; --card:#1c1b19; } }
-:root[data-theme="dark"] { --bg:#141413; --fg:#ecebe6; --muted:#9c978c; --line:#2d2c29; --dark:#ef6b5c; --up:#5cc98a; --card:#1c1b19; }
+:root { color-scheme: dark; --bg:#0d0606; --fg:#f2e9e7; --muted:#a8918d; --line:#3a1714; --red:#ff3b2f; --dark:#ff3b2f; --up:#5cc98a; --card:#160a09; }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
 main { max-width: 960px; margin: 0 auto; padding: 32px 16px 64px; }
-h1 { font-size: clamp(28px, 6vw, 44px); line-height:1.1; margin: 0 0 8px; }
+h1 { color: var(--red); text-shadow: 0 0 24px rgba(255,59,47,.35); font-size: clamp(28px, 6vw, 44px); line-height:1.1; margin: 0 0 8px; }
 h2 { margin: 40px 0 8px; font-size: 22px; }
 h2 .n { color: var(--muted); font-weight: 400; }
-a { color: inherit; }
+a { color: var(--red); }
+td a:first-child { color: var(--fg); text-decoration-color: var(--red); }
+th { border-bottom-color: var(--red) !important; }
+.hero { display:block; width:100%; height:auto; border-radius:8px; border:1px solid var(--line); margin: 0 0 24px; box-shadow: 0 0 48px rgba(255,59,47,.25); }
 .lede { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
 .wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
@@ -34,6 +35,8 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <main>
 <h1>PHPocalypse Tracker</h1>
 <p class="lede">Sites that went offline because of the October 2026 PHP remote code execution flaws, and when they came back.</p>
+
+<img class="hero" src="elephpant.jpg" width="960" height="540" alt="Cartoon: a blue PHP elephant on a stage, its hair on fire and its face shocked, while a crowd of photographers points cameras at it.">
 
 <p>On 20 October 2026 the PHP project announced fixes for two critical remote code execution flaws, CVE-2026-109618 and CVE-2026-109619, for release at 14:00 UTC on 21 October. The embargo leaked a day early and exploit claims spread on social media. A PHP release manager <a href="https://phpc.social/@joepferguson/117476265521630745">said</a> that changing PHP settings will not stop the attacks. Cloudflare <a href="https://x.com/dok2001/status/2112811965735202970">reported early attacks</a> and deployed stopgap firewall rules.</p>
 <p>Many operators did not wait for the patch. They took their PHP services offline. This page lists those sites, when a public source first reported them dark, and when they came back.</p>
