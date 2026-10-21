@@ -31,6 +31,7 @@ td.notes { color: var(--muted); min-width: 220px; }
 .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
 #dark .dot { background: var(--dark); } #back .dot { background: var(--up); }
 @media (max-width: 600px) { th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3) { display: none; } table, thead, tbody { display: block; } tr { display: grid; grid-template-columns: 1fr auto auto; border-bottom: 1px solid var(--line); } th, td { padding: 8px; border: 0; } th:last-child { display: none; } td.notes { grid-column: 1 / -1; padding-top: 0; } .back th:nth-child(4), .back td:nth-child(4) { display: none; } }
+.updated { margin: 32px 0 -24px; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
 footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 </style>
 </head>
@@ -43,6 +44,8 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <p>On 20 October 2026 the PHP project announced fixes for two critical remote code execution flaws, CVE-2026-109618 and CVE-2026-109619, for release at 14:00 UTC on 21 October. The embargo leaked a day early and exploit claims spread on social media. A PHP release manager <a href="https://phpc.social/@joepferguson/117476265521630745">said</a> that changing PHP settings will not stop the attacks. Cloudflare <a href="https://x.com/dok2001/status/2112811965735202970">reported early attacks</a> and deployed stopgap firewall rules.</p>
 <p>Many operators did not wait for the patch. They took their PHP services offline. This page lists those sites, when a public source first reported them dark, and when they came back.</p>
 <p>Background: <a href="https://chaosguru.substack.com/p/the-phpocalypse-is-the-second-biggest">The PHPocalypse is the second biggest story today</a>.</p>
+
+<p class="updated" id="updated"></p>
 
 <h2 id="dark"><span class="dot"></span>Still dark <span class="n" id="dark-n"></span></h2>
 <div class="wrap"><table><thead><tr><th>Site</th><th>Country</th><th>Type</th><th>Reported dark</th><th>Notes</th></tr></thead><tbody id="dark-rows"></tbody></table></div>
@@ -64,14 +67,21 @@ const newest = k => (a, b) => b[k].localeCompare(a[k]) || a.name.localeCompare(b
 const row = (s, back) => `<tr><td><a href="${esc(s.url)}">${esc(s.name)}</a></td><td>${esc(s.country)}</td><td>${esc(s.type)}</td>` +
   `<td class="t"><a href="${esc(s.source)}">${fmt(s.dark_since)}</a></td>` + (back ? `<td class="t">${fmt(s.back_up)}</td>` : '') +
   `<td class="notes">${esc(s.notes)}</td></tr>`;
-Papa.parse('sites.csv?' + Date.now(), { download: true, header: true, skipEmptyLines: true, complete: ({data}) => {
+// Pages sets Last-Modified to the deploy time, and a deploy is a data change.
+const ago = d => { const m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : `${Math.floor(m / 60)} h ${m % 60} min ago`; };
+const showUpdated = d => document.getElementById('updated').textContent = `Last updated: ${fmt(d)} (${ago(d)})`;
+fetch('sites.csv?' + Date.now()).then(r => {
+  const mod = r.headers.get('Last-Modified');
+  if (mod) { const d = new Date(mod); showUpdated(d); setInterval(() => showUpdated(d), 60000); }
+  return r.text();
+}).then(text => Papa.parse(text, { header: true, skipEmptyLines: true, complete: ({data}) => {
   const dark = data.filter(s => !s.back_up).sort(newest('dark_since'));
   const back = data.filter(s => s.back_up).sort(newest('back_up'));
   document.getElementById('dark-rows').innerHTML = dark.map(s => row(s, false)).join('');
   document.getElementById('back-rows').innerHTML = back.map(s => row(s, true)).join('');
   document.getElementById('dark-n').textContent = `(${dark.length})`;
   document.getElementById('back-n').textContent = `(${back.length})`;
-}});
+}}));
 </script>
 </body>
 </html>
