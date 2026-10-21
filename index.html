@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PHPocalypse Tracker</title>
-<meta name="description" content="Sites that went offline because of the October 2026 PHP remote code execution flaws, and when they came back.">
+<title>PHPocalypse Tracker: PHP2Shell outages (CVE-2026-109618, CVE-2026-109619)</title>
+<meta name="description" content="Sites that went offline because of PHP2Shell, the October 2026 PHP remote code execution flaws CVE-2026-109618 and CVE-2026-109619, and when they came back.">
 <script defer src="https://cloud.umami.is/script.js" data-website-id="9b01b949-c3f7-4fe7-9b6a-bb4ece029fdd"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7741887293607665"
      crossorigin="anonymous"></script>
@@ -22,6 +22,7 @@ th { border-bottom-color: var(--red) !important; }
 header { display:flex; align-items:center; gap:24px; margin-bottom:24px; }
 .hero { flex: 0 0 auto; width: 220px; height: auto; filter: drop-shadow(0 0 28px rgba(255,59,47,.55)); }
 @media (max-width: 600px) { header { flex-direction: column-reverse; align-items: flex-start; } .hero { width: 180px; align-self: center; } }
+main ul { padding-left: 20px; }
 .lede { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
 .wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
@@ -42,10 +43,16 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <body>
 <main>
 <header><div><h1>PHPocalypse Tracker</h1>
-<p class="lede">Sites that went offline because of the October 2026 PHP remote code execution flaws, and when they came back.</p></div>
+<p class="lede">Sites that went offline because of PHP2Shell, the October 2026 PHP remote code execution flaws CVE-2026-109618 and CVE-2026-109619, and when they came back.</p></div>
 <img class="hero" src="elephpant.png" width="434" height="426" alt="Cartoon: a panicked blue PHP elephant with its hair on fire."></header>
 
-<p>On 20 October 2026 the PHP project announced fixes for two critical remote code execution flaws, CVE-2026-109618 and CVE-2026-109619, for release at 14:00 UTC on 21 October. The embargo leaked a day early and exploit claims spread on social media. A PHP release manager <a href="https://phpc.social/@joepferguson/117476265521630745">said</a> that changing PHP settings will not stop the attacks. Cloudflare <a href="https://x.com/dok2001/status/2112811965735202970">reported early attacks</a> and deployed stopgap firewall rules.</p>
+<p>On 21 October 2026 at 14:00 UTC, the PHP project <a href="https://www.php.net/archive/2026.php">released</a> PHP 8.5.12, 8.4.27, 8.3.36 and 8.2.35. They fix two critical flaws that allow unauthenticated remote code execution:</p>
+<ul>
+<li><strong>CVE-2026-109618</strong>, RCE via out-of-memory corruption (<a href="https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w">GHSA-w8hw-w9fx-j79w</a>)</li>
+<li><strong>CVE-2026-109619</strong>, RCE via stale global state (<a href="https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp">GHSA-6wmf-4rv5-p3rp</a>)</li>
+</ul>
+<p>PHP says every PHP installation that serves web requests is at risk, including PHP-FPM, Apache with mod_php, php-cgi, FrankenPHP and LiteSpeed. The risk is highest for mod_php. PHP 8.1 and older get no official update, but the PHP security team published minimal source backports for PHP 7.4, 8.0 and 8.1.</p>
+<p>The PHP project announced the release on 20 October. The embargo leaked a day early and exploit claims spread on social media. A PHP release manager <a href="https://phpc.social/@joepferguson/117476265521630745">said</a> that changing PHP settings will not stop the attacks. Cloudflare <a href="https://x.com/dok2001/status/2112811965735202970">reported early attacks</a> and deployed stopgap firewall rules.</p>
 <p>CERT-EU, the cybersecurity team for the EU institutions, <a href="https://cert.europa.eu/publications/security-advisories/2026-018/">advised</a> organizations that cannot patch at once to take internet-facing PHP applications off the network until a fix ships. Many operators did not wait for the patch. They took their PHP services offline. This page lists those sites, when a public source first reported them dark, and when they came back.</p>
 <p>Background: <a href="https://chaosguru.substack.com/p/the-phpocalypse-is-the-second-biggest">The PHPocalypse is the second biggest story today</a>.</p>
 
