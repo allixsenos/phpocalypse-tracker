@@ -74,7 +74,7 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmt = iso => new Date(iso).toLocaleString('en-GB', {timeZone:'UTC', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) + ' UTC';
+const fmt = iso => !iso ? 'unknown' : new Date(iso).toLocaleString('en-GB', {timeZone:'UTC', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) + ' UTC';
 // Newest first; ISO UTC strings sort as text.
 const newest = k => (a, b) => b[k].localeCompare(a[k]) || a.name.localeCompare(b.name);
 // Google's favicon cache still has icons for sites that are down.
