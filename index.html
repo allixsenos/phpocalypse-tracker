@@ -40,6 +40,11 @@ td.notes { color: var(--muted); min-width: 220px; overflow-wrap: anywhere; }
 .fav { vertical-align: -3px; margin-right: 8px; border-radius: 3px; }
 .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
 #dark .dot { background: var(--dark); } #back .dot { background: var(--up); }
+/* Notes: two lines until clicked; the summary holds the whole note and unclamps when open. */
+td.notes summary { list-style: none; cursor: pointer; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+td.notes summary::-webkit-details-marker { display: none; }
+td.notes details[open] summary { display: block; -webkit-line-clamp: unset; line-clamp: unset; }
+td.notes summary:hover, td.notes summary:focus-visible { color: var(--fg); outline: none; }
 .tp { display: none; }
 th[data-k] button { background: none; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; text-align: inherit; cursor: pointer; }
 th[data-k] button:hover, th[data-k] button:focus-visible { color: var(--fg); outline: none; text-decoration: underline; }
@@ -137,7 +142,7 @@ const dur = s => {
 const cell = iso => fmt(iso).replace(' UTC', '<span class="utc"> UTC</span>');
 const row = (s, back) => `<tr><td class="site">${icon(s.url)}<a href="${esc(s.url)}">${esc(s.name)}</a><div class="host">${esc(new URL(s.url).hostname.replace(/^www\./, ''))}<span class="tp"> · ${esc(s.type)}</span></div></td><td class="type">${esc(s.type)}</td>` +
   `<td class="t" data-l="Dark"><a href="${esc(s.source)}">${cell(s.dark_since)}</a></td>` + (back ? `<td class="t" data-l="Back">${cell(s.back_up)}</td><td class="t dur" data-l="Time dark">${dur(s)}</td>` : '') +
-  `<td class="notes">${esc(s.notes)}</td></tr>`;
+  `<td class="notes"><details><summary title="Show full note">${esc(s.notes)}</summary></details></td></tr>`;
 // Pages sets Last-Modified to the deploy time, and a deploy is a data change.
 const ago = d => { const m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : `${Math.floor(m / 60)} h ${m % 60} min ago`; };
 const showUpdated = d => document.getElementById('updated').textContent = `Last updated: ${fmt(d)} (${ago(d)})`;
