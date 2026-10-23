@@ -19,8 +19,12 @@ All data is in [`sites.csv`](sites.csv). Times are UTC.
 | `source` | Link to the report |
 | `notes` | What the site shows, and any caveats |
 
-## Report a site
+## Status
 
-Open an [issue](https://github.com/allixsenos/phpocalypse-tracker/issues/new/choose). Give the site, a link that shows it went dark or came back, and the time if you know it. Each report is checked before it goes on the list.
+All sites reported dark have recovered. Automated tracking stopped on 23 October 2026.
 
-This repository does not accept pull requests. Pull requests are closed without review.
+The page shows an estimated "time dark" for each site. It runs from `dark_since` to `back_up`. Because `dark_since` is the first public report, the real outage was often longer.
+
+## Correct or expand the record
+
+Pull requests are welcome. Edit `sites.csv`, and give a source link for every change. You can also open an [issue](https://github.com/allixsenos/phpocalypse-tracker/issues/new/choose) with the site, a source link and the time if you know it.

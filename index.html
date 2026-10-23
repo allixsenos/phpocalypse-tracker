@@ -28,18 +28,22 @@ main ul { padding-left: 20px; }
 .wrap:has(.back) { background: #0b1a10; border-color: #1c3a25; }
 .back th, .back td, .back tr { border-bottom-color: #1c3a25; }
 .back th { border-bottom-color: var(--up) !important; }
+.back th { white-space: normal; }
+.back td.notes { min-width: 170px; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font-weight: 600; color: var(--muted); white-space: nowrap; }
 tr:last-child td { border-bottom: 0; }
 td.t { white-space: nowrap; font-variant-numeric: tabular-nums; }
 td.notes { color: var(--muted); min-width: 220px; overflow-wrap: anywhere; }
-.host { color: var(--muted); font-size: 12px; margin: 2px 0 0 24px; }
+.host { color: var(--muted); font-size: 12px; margin: 2px 0 0 24px; overflow-wrap: anywhere; }
 .fav { vertical-align: -3px; margin-right: 8px; border-radius: 3px; }
 .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
 #dark .dot { background: var(--dark); } #back .dot { background: var(--up); }
-@media (max-width: 600px) { th:nth-child(2), td:nth-child(2) { display: none; } table, thead, tbody { display: block; } tr { display: grid; grid-template-columns: 1fr auto auto; border-bottom: 1px solid var(--line); } th, td { padding: 8px; border: 0; } th:last-child { display: none; } td.notes { grid-column: 1 / -1; padding-top: 0; } .back th:nth-child(3), .back td:nth-child(3) { display: none; } }
+@media (max-width: 600px) { th:nth-child(2), td:nth-child(2) { display: none; } table, thead, tbody { display: block; } tr { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; border-bottom: 1px solid var(--line); } th, td { padding: 8px; border: 0; } th:last-child { display: none; } td.notes { grid-column: 1 / -1; padding-top: 0; } .back th:nth-child(3), .back td:nth-child(3) { display: none; } }
 .updated { margin: 32px 0 -24px; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.status { margin: 32px 0 0; padding: 12px 16px; border: 1px solid #1c3a25; border-radius: 8px; background: #0b1a10; }
+.allback { color: var(--up); margin: 8px 0 0; }
 footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 </style>
 </head>
@@ -59,17 +63,19 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <p>CERT-EU, the cybersecurity team for the EU institutions, <a href="https://cert.europa.eu/publications/security-advisories/2026-018/">advised</a> organizations that cannot patch at once to take internet-facing PHP applications off the network until a fix ships. Many operators did not wait for the patch. They took their PHP services offline. This page lists those sites, when a public source first reported them dark, and when they came back.</p>
 <p>Background: <a href="https://chaosguru.substack.com/p/the-phpocalypse-is-the-second-biggest">The PHPocalypse is the second biggest story today</a>.</p>
 
+<p class="status"><strong>All sites reported dark have recovered.</strong> Automated tracking stopped on 23 October 2026. Pull requests that correct or expand the record are still welcome.</p>
+
 <p class="updated" id="updated"></p>
 
 <h2 id="dark"><span class="dot"></span>Still dark <span class="n" id="dark-n"></span></h2>
 <div class="wrap"><table><thead><tr><th>Site</th><th>Type</th><th>Reported dark</th><th>Notes</th></tr></thead><tbody id="dark-rows"></tbody></table></div>
 
 <h2 id="back"><span class="dot"></span>Back up <span class="n" id="back-n"></span></h2>
-<div class="wrap"><table class="back"><thead><tr><th>Site</th><th>Type</th><th>Reported dark</th><th>Back up</th><th>Notes</th></tr></thead><tbody id="back-rows"></tbody></table></div>
+<div class="wrap"><table class="back"><thead><tr><th>Site</th><th>Type</th><th>Reported dark</th><th>Back up</th><th>Time dark (est.)</th><th>Notes</th></tr></thead><tbody id="back-rows"></tbody></table></div>
 
 <footer>
 <p>All times are UTC. "Reported dark" is the time of the first public report, not the moment the site went offline. Each date links to its source. Aggregator reports are not confirmed at the original source.</p>
-<p>Know a site that should be on this list, or one that is back? <a href="https://github.com/allixsenos/phpocalypse-tracker/issues/new/choose">Open an issue</a>. The raw data is in <a href="sites.csv">sites.csv</a>.</p>
+<p>To correct or expand the record, open a <a href="https://github.com/allixsenos/phpocalypse-tracker/pulls">pull request</a> against <a href="sites.csv">sites.csv</a> or an <a href="https://github.com/allixsenos/phpocalypse-tracker/issues/new/choose">issue</a>. "Time dark" is an estimate: it runs from the first public report, not from the moment a site went offline.</p>
 <p>Built and maintained by <a href="https://allixsenos.github.io/">Luka Kladarić</a>. Source on <a href="https://github.com/allixsenos/phpocalypse-tracker">GitHub</a>.</p>
 <p><a href="https://allixsenos.github.io/privacy.html">Privacy</a></p>
 </footer>
@@ -82,8 +88,15 @@ const fmt = iso => !iso ? 'unknown' : new Date(iso).toLocaleString('en-GB', {tim
 const newest = k => (a, b) => b[k].localeCompare(a[k]) || a.name.localeCompare(b.name);
 // Google's favicon cache still has icons for sites that are down.
 const icon = u => `<img class="fav" src="https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(new URL(u).hostname)}" width="16" height="16" alt="" loading="lazy">`;
+// Estimate only: dark_since is the first public report, not the real outage start.
+const dur = s => {
+  const m = Math.round((Date.parse(s.back_up) - Date.parse(s.dark_since)) / 60000);
+  if (!(m >= 0)) return 'unknown';
+  const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = m % 60;
+  return d ? `${d} d ${h} h` : h ? `${h} h ${mm} min` : `${mm} min`;
+};
 const row = (s, back) => `<tr><td>${icon(s.url)}<a href="${esc(s.url)}">${esc(s.name)}</a><div class="host">${esc(new URL(s.url).hostname.replace(/^www\./, ''))}</div></td><td>${esc(s.type)}</td>` +
-  `<td class="t"><a href="${esc(s.source)}">${fmt(s.dark_since)}</a></td>` + (back ? `<td class="t">${fmt(s.back_up)}</td>` : '') +
+  `<td class="t"><a href="${esc(s.source)}">${fmt(s.dark_since)}</a></td>` + (back ? `<td class="t">${fmt(s.back_up)}</td><td class="t">${dur(s)}</td>` : '') +
   `<td class="notes">${esc(s.notes)}</td></tr>`;
 // Pages sets Last-Modified to the deploy time, and a deploy is a data change.
 const ago = d => { const m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : `${Math.floor(m / 60)} h ${m % 60} min ago`; };
@@ -96,6 +109,7 @@ fetch('sites.csv?' + Date.now()).then(r => {
   const dark = data.filter(s => !s.back_up).sort(newest('dark_since'));
   const back = data.filter(s => s.back_up).sort(newest('back_up'));
   document.getElementById('dark-rows').innerHTML = dark.map(s => row(s, false)).join('');
+  if (!dark.length) document.getElementById('dark-rows').closest('.wrap').outerHTML = '<p class="allback">Every site reported dark has recovered.</p>';
   document.getElementById('back-rows').innerHTML = back.map(s => row(s, true)).join('');
   document.getElementById('dark-n').textContent = `(${dark.length})`;
   document.getElementById('back-n').textContent = `(${back.length})`;
