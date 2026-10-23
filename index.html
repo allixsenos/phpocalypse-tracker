@@ -40,7 +40,25 @@ td.notes { color: var(--muted); min-width: 220px; overflow-wrap: anywhere; }
 .fav { vertical-align: -3px; margin-right: 8px; border-radius: 3px; }
 .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
 #dark .dot { background: var(--dark); } #back .dot { background: var(--up); }
-@media (max-width: 600px) { th:nth-child(2), td:nth-child(2) { display: none; } table, thead, tbody { display: block; } tr { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; border-bottom: 1px solid var(--line); } th, td { padding: 8px; border: 0; } th:last-child { display: none; } td.notes { grid-column: 1 / -1; padding-top: 0; } .back th:nth-child(3), .back td:nth-child(3) { display: none; } }
+.tp { display: none; }
+/* Phones: each site becomes a card with a labelled row of times under its name. */
+@media (max-width: 600px) {
+  .wrap { overflow: visible; }
+  thead, td.type { display: none; }
+  table, tbody { display: block; }
+  tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; padding: 14px; border-bottom: 1px solid var(--line); }
+  .back tr { border-bottom-color: #1c3a25; }
+  tr:last-child { border-bottom: 0; }
+  td { padding: 0; border: 0; }
+  td.site, td.notes { grid-column: 1 / -1; }
+  td.site a { font-size: 16px; font-weight: 600; }
+  .tp { display: inline; }
+  .utc { display: none; }
+  td.t { white-space: normal; font-size: 13px; }
+  td[data-l]::before { content: attr(data-l); display: block; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+  td.dur { color: var(--up); font-weight: 600; }
+  td.notes { min-width: 0; font-size: 13px; line-height: 1.45; }
+}
 .updated { margin: 32px 0 -24px; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
 .status { margin: 32px 0 0; padding: 12px 16px; border: 1px solid #1c3a25; border-radius: 8px; background: #0b1a10; }
 .allback { color: var(--up); margin: 8px 0 0; }
@@ -95,8 +113,10 @@ const dur = s => {
   const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = m % 60;
   return d ? `${d} d ${h} h` : h ? `${h} h ${mm} min` : `${mm} min`;
 };
-const row = (s, back) => `<tr><td>${icon(s.url)}<a href="${esc(s.url)}">${esc(s.name)}</a><div class="host">${esc(new URL(s.url).hostname.replace(/^www\./, ''))}</div></td><td>${esc(s.type)}</td>` +
-  `<td class="t"><a href="${esc(s.source)}">${fmt(s.dark_since)}</a></td>` + (back ? `<td class="t">${fmt(s.back_up)}</td><td class="t">${dur(s)}</td>` : '') +
+// Table cells: the UTC suffix is hidden on phones, where every label already implies it.
+const cell = iso => fmt(iso).replace(' UTC', '<span class="utc"> UTC</span>');
+const row = (s, back) => `<tr><td class="site">${icon(s.url)}<a href="${esc(s.url)}">${esc(s.name)}</a><div class="host">${esc(new URL(s.url).hostname.replace(/^www\./, ''))}<span class="tp"> · ${esc(s.type)}</span></div></td><td class="type">${esc(s.type)}</td>` +
+  `<td class="t" data-l="Dark"><a href="${esc(s.source)}">${cell(s.dark_since)}</a></td>` + (back ? `<td class="t" data-l="Back">${cell(s.back_up)}</td><td class="t dur" data-l="Time dark">${dur(s)}</td>` : '') +
   `<td class="notes">${esc(s.notes)}</td></tr>`;
 // Pages sets Last-Modified to the deploy time, and a deploy is a data change.
 const ago = d => { const m = Math.round((Date.now() - d) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : `${Math.floor(m / 60)} h ${m % 60} min ago`; };
