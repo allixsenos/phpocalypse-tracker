@@ -25,6 +25,9 @@ header { display:flex; align-items:center; gap:24px; margin-bottom:24px; }
 main ul { padding-left: 20px; }
 .lede { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
 .wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.wrap:has(.back) { background: #0b1a10; border-color: #1c3a25; }
+.back th, .back td, .back tr { border-bottom-color: #1c3a25; }
+.back th { border-bottom-color: var(--up) !important; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font-weight: 600; color: var(--muted); white-space: nowrap; }
