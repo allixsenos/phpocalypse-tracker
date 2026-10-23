@@ -41,10 +41,17 @@ td.notes { color: var(--muted); min-width: 220px; overflow-wrap: anywhere; }
 .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
 #dark .dot { background: var(--dark); } #back .dot { background: var(--up); }
 .tp { display: none; }
+th[data-k] button { background: none; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; text-align: inherit; cursor: pointer; }
+th[data-k] button:hover, th[data-k] button:focus-visible { color: var(--fg); outline: none; text-decoration: underline; }
+th[aria-sort="ascending"] button::after { content: " \25B2"; font-size: 10px; }
+th[aria-sort="descending"] button::after { content: " \25BC"; font-size: 10px; }
+.sortbar { display: none; }
 /* Phones: each site becomes a card with a labelled row of times under its name. */
 @media (max-width: 600px) {
   .wrap { overflow: visible; }
   thead, td.type { display: none; }
+  .sortbar { display: flex; gap: 8px; align-items: center; margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+  .sortbar select { flex: 1; background: var(--card); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font: inherit; }
   table, tbody { display: block; }
   tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; padding: 14px; border-bottom: 1px solid var(--line); }
   .back tr { border-bottom-color: #1c3a25; }
@@ -86,10 +93,16 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <p class="updated" id="updated"></p>
 
 <h2 id="dark"><span class="dot"></span>Still dark <span class="n" id="dark-n"></span></h2>
-<div class="wrap"><table><thead><tr><th>Site</th><th>Type</th><th>Reported dark</th><th>Notes</th></tr></thead><tbody id="dark-rows"></tbody></table></div>
+<div class="wrap"><table data-t="dark"><thead><tr><th data-k="name" aria-sort="none"><button type="button">Site</button></th><th>Type</th><th data-k="dark_since" aria-sort="none"><button type="button">Reported dark</button></th><th>Notes</th></tr></thead><tbody id="dark-rows"></tbody></table></div>
 
 <h2 id="back"><span class="dot"></span>Back up <span class="n" id="back-n"></span></h2>
-<div class="wrap"><table class="back"><thead><tr><th>Site</th><th>Type</th><th>Reported dark</th><th>Back up</th><th>Time dark (est.)</th><th>Notes</th></tr></thead><tbody id="back-rows"></tbody></table></div>
+<label class="sortbar">Sort <select id="back-sort">
+<option value="dur:-1">Time dark, longest first</option><option value="dur:1">Time dark, shortest first</option>
+<option value="back_up:-1">Back up, newest first</option><option value="back_up:1">Back up, oldest first</option>
+<option value="dark_since:-1">Reported dark, newest first</option><option value="dark_since:1">Reported dark, oldest first</option>
+<option value="name:1">Site, A to Z</option><option value="name:-1">Site, Z to A</option>
+</select></label>
+<div class="wrap"><table class="back" data-t="back"><thead><tr><th data-k="name" aria-sort="none"><button type="button">Site</button></th><th>Type</th><th data-k="dark_since" aria-sort="none"><button type="button">Reported dark</button></th><th data-k="back_up" aria-sort="none"><button type="button">Back up</button></th><th data-k="dur" aria-sort="none"><button type="button">Time dark (est.)</button></th><th>Notes</th></tr></thead><tbody id="back-rows"></tbody></table></div>
 
 <footer>
 <p>All times are UTC. "Reported dark" is the time of the first public report, not the moment the site went offline. Each date links to its source. Aggregator reports are not confirmed at the original source.</p>
@@ -102,14 +115,21 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <script>
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = iso => !iso ? 'unknown' : new Date(iso).toLocaleString('en-GB', {timeZone:'UTC', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) + ' UTC';
-// Newest first; ISO UTC strings sort as text.
-const newest = k => (a, b) => b[k].localeCompare(a[k]) || a.name.localeCompare(b.name);
+// Sorting: ISO UTC strings compare as text. Unknown values always sort last.
+const KEYS = { name: s => s.name.toLowerCase(), dark_since: s => s.dark_since || null, back_up: s => s.back_up || null, dur: s => mins(s) };
+const DEFAULT_DIR = { name: 1, dark_since: -1, back_up: -1, dur: -1 };
+const sortBy = (list, key, dir) => [...list].sort((a, b) => {
+  const x = KEYS[key](a), y = KEYS[key](b);
+  if (x === null || y === null) return (x === null) - (y === null) || a.name.localeCompare(b.name);
+  return (x < y ? -1 : x > y ? 1 : 0) * dir || a.name.localeCompare(b.name);
+});
 // Google's favicon cache still has icons for sites that are down.
 const icon = u => `<img class="fav" src="https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(new URL(u).hostname)}" width="16" height="16" alt="" loading="lazy">`;
 // Estimate only: dark_since is the first public report, not the real outage start.
+const mins = s => { const m = Math.round((Date.parse(s.back_up) - Date.parse(s.dark_since)) / 60000); return m >= 0 ? m : null; };
 const dur = s => {
-  const m = Math.round((Date.parse(s.back_up) - Date.parse(s.dark_since)) / 60000);
-  if (!(m >= 0)) return 'unknown';
+  const m = mins(s);
+  if (m === null) return 'unknown';
   const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = m % 60;
   return d ? `${d} d ${h} h` : h ? `${h} h ${mm} min` : `${mm} min`;
 };
@@ -126,13 +146,29 @@ fetch('sites.csv?' + Date.now()).then(r => {
   if (mod) { const d = new Date(mod); showUpdated(d); setInterval(() => showUpdated(d), 60000); }
   return r.text();
 }).then(text => Papa.parse(text, { header: true, skipEmptyLines: true, complete: ({data}) => {
-  const dark = data.filter(s => !s.back_up).sort(newest('dark_since'));
-  const back = data.filter(s => s.back_up).sort(newest('back_up'));
-  document.getElementById('dark-rows').innerHTML = dark.map(s => row(s, false)).join('');
-  if (!dark.length) document.getElementById('dark-rows').closest('.wrap').outerHTML = '<p class="allback">Every site reported dark has recovered.</p>';
-  document.getElementById('back-rows').innerHTML = back.map(s => row(s, true)).join('');
-  document.getElementById('dark-n').textContent = `(${dark.length})`;
-  document.getElementById('back-n').textContent = `(${back.length})`;
+  const lists = { dark: data.filter(s => !s.back_up), back: data.filter(s => s.back_up) };
+  const state = { dark: { key: 'dark_since', dir: -1 }, back: { key: 'dur', dir: -1 } };
+  const render = t => {
+    const { key, dir } = state[t];
+    document.getElementById(t + '-rows').innerHTML = sortBy(lists[t], key, dir).map(s => row(s, t === 'back')).join('');
+    document.querySelectorAll(`table[data-t="${t}"] th[data-k]`).forEach(th =>
+      th.setAttribute('aria-sort', th.dataset.k !== key ? 'none' : dir > 0 ? 'ascending' : 'descending'));
+    if (t === 'back') document.getElementById('back-sort').value = `${key}:${dir}`;
+  };
+  document.querySelectorAll('table[data-t] th[data-k] button').forEach(b => b.addEventListener('click', () => {
+    const t = b.closest('table').dataset.t, k = b.parentElement.dataset.k, st = state[t];
+    state[t] = st.key === k ? { key: k, dir: -st.dir } : { key: k, dir: DEFAULT_DIR[k] };
+    render(t);
+  }));
+  document.getElementById('back-sort').addEventListener('change', e => {
+    const [key, dir] = e.target.value.split(':');
+    state.back = { key, dir: Number(dir) };
+    render('back');
+  });
+  render('dark'); render('back');
+  if (!lists.dark.length) document.getElementById('dark-rows').closest('.wrap').outerHTML = '<p class="allback">Every site reported dark has recovered.</p>';
+  document.getElementById('dark-n').textContent = `(${lists.dark.length})`;
+  document.getElementById('back-n').textContent = `(${lists.back.length})`;
 }}));
 </script>
 </body>
