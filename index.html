@@ -93,7 +93,7 @@ footer { margin-top: 48px; color: var(--muted); font-size: 14px; }
 <p>CERT-EU, the cybersecurity team for the EU institutions, <a href="https://cert.europa.eu/publications/security-advisories/2026-018/">advised</a> organizations that cannot patch at once to take internet-facing PHP applications off the network until a fix ships. Many operators did not wait for the patch. They took their PHP services offline. This page lists those sites, when a public source first reported them dark, and when they came back.</p>
 <p>Background: <a href="https://chaosguru.substack.com/p/the-phpocalypse-is-the-second-biggest">The PHPocalypse is the second biggest story today</a>. For detection and mitigation material, and lists of software that bundles PHP, see the Dutch NCSC&rsquo;s <a href="https://github.com/NCSC-NL/php2shell">php2shell repository</a>.</p>
 
-<p class="status">Automated tracking stopped on 23 October 2026. On 25 October we added 124 sites from the <a href="https://phpvulnerabilities.app/outages/">phpvulnerabilities.app outage list</a>, which built on this tracker&rsquo;s data. Their times and status are as last listed there. Pull requests that correct or expand the record are still welcome.</p>
+<p class="status">Automated tracking stopped on 23 October 2026. On 25 October we added 124 sites from the <a href="https://phpvulnerabilities.app/outages/">phpvulnerabilities.app outage list</a>, which built on this tracker&rsquo;s data. Their times are as listed there. This tracker checked the ones still listed as dark once, on 25 October, and marked five as back. Pull requests that correct or expand the record are still welcome.</p>
 
 <p class="updated" id="updated"></p>
 
@@ -132,7 +132,7 @@ const sortBy = (list, key, dir) => [...list].sort((a, b) => {
 // Google's favicon cache still has icons for sites that are down.
 const icon = u => `<img class="fav" src="https://www.google.com/s2/favicons?sz=32&domain=${encodeURIComponent(new URL(u).hostname)}" width="16" height="16" alt="" loading="lazy">`;
 // Estimate only: dark_since is the first public report, not the real outage start.
-const mins = s => { if (s.dark_since.length === 10) return null; const m = Math.round((Date.parse(s.back_up) - Date.parse(s.dark_since)) / 60000); return m >= 0 ? m : null; };
+const mins = s => { if (s.dark_since.length === 10 || s.back_up.length === 10) return null; const m = Math.round((Date.parse(s.back_up) - Date.parse(s.dark_since)) / 60000); return m >= 0 ? m : null; };
 const dur = s => {
   const m = mins(s);
   if (m === null) return 'unknown';
